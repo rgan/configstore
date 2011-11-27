@@ -76,11 +76,5 @@ namespace Configstore.Controllers
             _repository.Delete(application);
             return RedirectToAction("Index");
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            _repository.Dispose();
-            base.Dispose(disposing);
-        }
     }
 }

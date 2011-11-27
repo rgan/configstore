@@ -7,44 +7,47 @@ namespace Configstore.Models
 {
     public class ConfigRepository : IConfigRepository
     {
-        private readonly ConfigContext _db = new ConfigContext();
-
         public IEnumerable<Application> GetAllApplications()
         {
-            return _db.Applications.ToList();
+            using(var context = new ConfigContext())
+            {
+                return context.Applications.ToList(); 
+            }
         }
 
         public IEnumerable<Environment> GetAllEnvironments()
         {
-            return _db.Environments.ToList();
+            using (var context = new ConfigContext())
+            {
+                return context.Environments.ToList();
+            }
         }
 
         public Application FindApplicationById(int id)
         {
-            return _db.Applications.Find(id);
+            using (var context = new ConfigContext())
+            {
+                return context.Applications.Include("ApplicationConfig").Include("ApplicationConfig.Environment").First(a => a.ApplicationID == id);
+            }
         }
 
         public void Add(Application app)
         {
-            _db.Applications.Add(app);
-            _db.SaveChanges();
-        }
-
-        public void Update(Application app)
-        {
-            _db.Entry(app).State = EntityState.Modified;
-            _db.SaveChanges();
+            using (var context = new ConfigContext())
+            {
+                context.Applications.Add(app);
+                context.SaveChanges();
+            }
         }
 
         public void Delete(Application application)
         {
-            _db.Applications.Remove(application);
-            _db.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            _db.Dispose();
+            using (var context = new ConfigContext())
+            {
+                var appFromDb = context.Applications.Find(application.ApplicationID);
+                context.Applications.Remove(appFromDb);
+                context.SaveChanges();
+            }
         }
     }
 }
