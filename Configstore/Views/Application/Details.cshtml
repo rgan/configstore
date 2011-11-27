@@ -1,0 +1,36 @@
+﻿@model Configstore.Models.Application
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Application</legend>
+
+    <div class="display-label">Name</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Name)
+    </div>
+    <table>
+    <tr><td>Env/Key</td>
+    @foreach (var env in Model.Environments())
+    {
+        <td>@env.Name</td>
+    }
+    </tr>
+    @foreach (var key in Model.Keys())
+    {
+        <tr><td>@key</td>
+        @foreach (var env in Model.Environments())
+        {
+                <td>@(Model.ValueForKeyIn(key, env))</td>
+         }
+        </tr>
+    }
+    </table>
+</fieldset>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
